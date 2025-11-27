@@ -2,7 +2,7 @@ import transporter from "../config/nodemailer.js";
 import Booking from "../models/Booking.js";
 import Hotel from "../models/Hotel.js";
 import Room from "../models/Room.js";
-import stripe, { Stripe } from "stripe";
+import stripe from "stripe";
 
 // Function to check room is available or not
 const checkAvailability = async ({ checkInDate, checkOutDate, room }) => {

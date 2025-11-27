@@ -2,7 +2,7 @@ import stripe from "stripe";
 import Booking from "../models/Booking.js";
 
 // API to handle Stripe Webhooks
-export const stripeWebhooks = async (req, res) => {
+export const stripeWebhooks = async (request, response) => {
   // Stripe Gateway  Initialize
   const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
   const sig = request.headers["stripe-signature"];
@@ -14,7 +14,7 @@ export const stripeWebhooks = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    Response.status(400).send(`Webhook Error: ${err.message}`);
+    response.status(400).send(`Webhook Error: ${err.message}`);
   }
   // Handle the event
   if (event.type === "payment_intent.succeeded") {
@@ -33,5 +33,5 @@ export const stripeWebhooks = async (req, res) => {
   } else {
     console.log("Unhandled event type :", event.type);
   }
-  Response.json({ received: true });
+  response.json({ received: true });
 };
