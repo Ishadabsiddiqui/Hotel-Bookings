@@ -9,6 +9,7 @@ import hotelRouter from "./routes/hotelRoutes.js";
 import connectCloudinay from "./config/cloudinary.js";
 import roomRouter from "./routes/roomRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
+import { stripeWebhooks } from "./controllers/stripeWebhook.js";
 
 // Database connection
 await connectDB();
@@ -16,6 +17,13 @@ await connectCloudinay();
 
 const app = express();
 app.use(cors()); // Enable Cross-origin Resource sharing
+
+// API to listen to Stripe Webhook
+app.post(
+  "/api/stripe",
+  express.raw({ type: "application/json" }),
+  stripeWebhooks
+);
 
 // Middleware
 app.use(express.json());
