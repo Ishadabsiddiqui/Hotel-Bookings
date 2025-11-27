@@ -1,10 +1,33 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Title from '../components/Title'
-import { assets, userBookingsDummyData } from '../assets/assets';
+import { assets } from '../assets/assets';
+import { useAppContext } from '../context/AppContext';
+import toast from 'react-hot-toast';
 
 
 const MyBookings = () => {
-    const [bookings, setBookings] = useState(userBookingsDummyData);
+    const { axios, getToken, user } = useAppContext();
+    const [bookings, setBookings] = useState([]);
+
+    const fetchUserBookings = async () => {
+        try {
+            const { data } = await axios.get("/api/bookings/user", { headers: { Authorization: `Bearer ${await getToken()}` } });
+            if (data.success) {
+                setBookings(data.bookings)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    useEffect(() => {
+        if (user) {
+            fetchUserBookings();
+        }
+    }, [user]);
+
     return (
         <div className='py-28 md:pb-35 md:pt-32 px-4 md:px-16 lg:px-24 xl:px-32'>
             <Title title="My Bookings" subTitle="Easily manage your past, current, and upcoming hotel reservations in one place. Plan your trips seamlessly with just a few clicks" align="left" />
@@ -18,9 +41,9 @@ const MyBookings = () => {
                     <div key={booking._id} className='grid grid-cols-1 md:grid-cols-[3fr_2fr_1fr] w-full border-b border-gray-300 py-6 first:border-t'>
                         {/* ------------- Hotels Details ------------------ */}
                         <div className='flex flex-col md:flex-row'>
-                            <img src={booking.room.images[0]} alt="hotel-img" className='min-md:w-44 rounded shadow object-cover' />
-                            <div className='flex flex-col gap1.5 max-md:mt-3 min-md:ml-4'>
-                                <p className='font-playfair text-2xl'>{booking.hotel.name}
+                            <img src={booking.room.images[0]} alt="hotel-img" className='md:w-44 rounded shadow object-cover' />
+                            <div className='flex flex-col gap1.5 max-md:mt-3 md:ml-4'>
+                                <p className='font-Playfair text-2xl'>{booking.hotel.name}
                                     <span className='font-inter text-sm'> ({booking.room.roomType})</span>
                                 </p>
                                 <div className='flex items-center gap-1 text-sm text-gray-500'>
